@@ -1,3 +1,2 @@
-python
-python -c "print('Hello')"          # Run code directly
-exit()
+print("hello")
+print("I like trees")
