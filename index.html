@@ -1,1 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoQuest</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2e7d32">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/service-worker.js");
+    }
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --green: #2e7d32;
+      --green-mid: #388e3c;
+      --green-light: #4caf50;
+      --green-pale: #e8f5e9;
+      --green-accent: #69f0ae;
+      --white: #ffffff;
+      --grey: #757575;
+      --dark: #1b1b1b;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #f0f7f0;
+      min-height: 100vh;
+      padding-bottom: 80px;
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--green);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+    }
+
+    .nav-brand {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .nav-brand img { width: 32px; height: 32px; border-radius: 8px; }
+
+    .nav-right { display: flex; align-items: center; gap: 8px; }
+
+    .nav-username {
+      font-size: 13px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .nav-logout {
+      color: rgba(255,255,255,0.85);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      transition: background 0.2s;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .nav-logout:hover { background: rgba(255,255,255,0.15); color: white; }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(160deg, var(--green) 0%, var(--green-mid) 60%, #1b5e20 100%);
+      padding: 32px 20px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 220px; height: 220px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -40px; left: -40px;
+      width: 160px; height: 160px;
+      background: rgba(105,240,174,0.1);
+      border-radius: 50%;
+    }
+
+    .hero-greeting {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--green-accent);
+      margin-bottom: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .hero-name {
+      font-size: 28px;
+      font-weight: 900;
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+
+    .hero-sub {
+      font-size: 14px;
+      color: rgba(255,255,255,0.75);
+      margin-bottom: 24px;
+    }
+
+    /* STATS ROW */
+    .stats-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 0;
+    }
+
+    .stat-pill {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 800;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* CARDS SECTION */
+    .cards-section {
+      padding: 0 16px;
+      margin-top: -20px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* QUEST CTA */
+    .quest-cta {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.10);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-decoration: none;
+      margin-bottom: 16px;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 2px solid transparent;
+    }
+
+    .quest-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      border-color: var(--green-light);
+    }
+
+    .quest-cta-icon {
+      width: 56px; height: 56px;
+      background: var(--green-pale);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+
+    .quest-cta-text { flex: 1; }
+    .quest-cta-text h3 { font-size: 16px; font-weight: 800; color: var(--dark); margin-bottom: 2px; }
+    .quest-cta-text p { font-size: 13px; color: var(--grey); font-weight: 600; }
+
+    .quest-cta-arrow {
+      font-size: 20px;
+      color: var(--green);
+      font-weight: 800;
+    }
+
+    /* PROGRESS */
+    .progress-card {
+      background: white;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      margin-bottom: 16px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .progress-header h3 { font-size: 15px; font-weight: 800; color: var(--dark); }
+    .progress-header span { font-size: 13px; font-weight: 700; color: var(--green); }
+
+    .progress-bar-bg {
+      height: 10px;
+      background: var(--green-pale);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green-light), var(--green-accent));
+      border-radius: 10px;
+      transition: width 1s ease;
+    }
+
+    .progress-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--grey);
+    }
+
+    /* SECTION TITLE */
+    .section { padding: 0 16px 16px; }
+    .section-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--grey);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    /* INFO CARDS */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .info-card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    .info-card .ic-emoji { font-size: 24px; margin-bottom: 8px; }
+    .info-card .ic-title { font-size: 13px; font-weight: 800; color: var(--dark); margin-bottom: 4px; }
+    .info-card .ic-desc { font-size: 12px; font-weight: 600; color: var(--grey); line-height: 1.4; }
+
+    /* RECENT ACTIVITY */
+    .activity-item {
+      background: white;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .activity-dot {
+      width: 36px; height: 36px;
+      background: var(--green-pale);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .activity-text { flex: 1; }
+    .activity-text p { font-size: 13px; font-weight: 700; color: var(--dark); }
+    .activity-text span { font-size: 11px; font-weight: 600; color: var(--grey); }
+    .activity-pts { font-size: 13px; font-weight: 800; color: var(--green); }
+
+    .empty-activity {
+      text-align: center;
+      padding: 24px;
+      color: var(--grey);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    /* BOTTOM NAV */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: white;
+      display: flex;
+      box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+
+    .bottom-nav a {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px 0;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--grey);
+      gap: 4px;
+      transition: color 0.2s;
+    }
+
+    .bottom-nav a.active { color: var(--green); }
+    .bottom-nav a span { font-size: 22px; }
+
+    /* LEVEL BADGE */
+    .level-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--green-accent);
+      color: var(--green);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 50px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a class="nav-brand" href="index.html">
+      <img src="icon-192.png" alt="EcoQuest">
+      EcoQuest
+    </a>
+    <div class="nav-right">
+      <span class="nav-username" id="nav-username"></span>
+      <button class="nav-logout" id="logout-btn">Log out</button>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-greeting" id="greeting">Good morning 🌤️</div>
+    <div class="hero-name" id="hero-name">Welcome back!</div>
+    <div class="hero-sub">Keep up the green habits today 🌿</div>
+    <div class="stats-row">
+      <div class="stat-pill">⭐ <span id="points-display">0</span> pts</div>
+      <div class="stat-pill">🔥 <span id="streak-display">0</span> day streak</div>
+    </div>
+    <div class="level-badge" id="level-badge">🌱 Eco Seedling</div>
+  </div>
+
+  <div class="cards-section">
+
+    <!-- DAILY QUEST CTA -->
+    <a class="quest-cta" href="quests.html">
+      <div class="quest-cta-icon">📋</div>
+      <div class="quest-cta-text">
+        <h3>Today's Quests</h3>
+        <p id="quest-status">Loading...</p>
+      </div>
+      <div class="quest-cta-arrow">→</div>
+    </a>
+
+    <!-- PROGRESS TO NEXT LEVEL -->
+    <div class="progress-card">
+      <div class="progress-header">
+        <h3>Progress to next level</h3>
+        <span id="progress-label-right">0 / 100 pts</span>
+      </div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progress-fill" style="width: 0%"></div>
+      </div>
+      <div class="progress-label" id="next-level-label">Keep going! 🌿</div>
+    </div>
+
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="section" style="margin-top: 4px;">
+    <div class="section-title">How EcoQuest Works</div>
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="ic-emoji">📋</div>
+        <div class="ic-title">Daily Quests</div>
+        <div class="ic-desc">3 new eco-challenges every day across 5 categories</div>
+      </div>
+      <div class="info-card">
+        <div class="ic-emoji">📷</div>
+        <div class="ic-title">Photo Proof</div>
+        <div class="ic-desc">Submit a photo to verify your completed quest</div>
+      </div>
+      <div class="info-card">
+        <div class="ic-emoji">⭐</div>
+        <div class="ic-title">Earn Points</div>
+        <div class="ic-desc">Complete quests to earn points and unlock badges</div>
+      </div>
+      <div class="info-card">
+        <div class="ic-emoji">🔥</div>
+        <div class="ic-title">Keep Streaks</div>
+        <div class="ic-desc">Complete at least one quest daily to maintain your streak</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECENT ACTIVITY -->
+  <div class="section">
+    <div class="section-title">Recent Activity</div>
+    <div id="activity-list">
+      <div class="empty-activity">Loading activity...</div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    <a href="index.html" class="active"><span>🏠</span>Home</a>
+    <a href="quests.html"><span>📋</span>Quests</a>
+    <a href="events.html"><span>🌍</span>Events</a>
+    <a href="leaderboard.html"><span>🏆</span>Leaderboard</a>
+    <a href="profile.html"><span>👤</span>Profile</a>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+    const supabase = createClient(
+      'https://ejlhwreqymbfbvxasshr.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVqbGh3cmVxeW1iZmJ2eGFzc2hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyNzc1NDUsImV4cCI6MjA5MDg1MzU0NX0.if-ptCOz9z-ZCW1hWBknM3NaN149dQGGPB6ShPV0xOY'
+    )
+
+    // Auth check
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) { window.location.href = 'login.html' }
+    const user = session.user
+
+    // Greeting
+    const hour = new Date().getHours()
+    const greetings = {
+      morning: 'Good morning 🌤️',
+      afternoon: 'Good afternoon ☀️',
+      evening: 'Good evening 🌙'
+    }
+    document.getElementById('greeting').textContent =
+      hour < 12 ? greetings.morning : hour < 18 ? greetings.afternoon : greetings.evening
+
+    // Logout
+    document.getElementById('logout-btn').onclick = async () => {
+      await supabase.auth.signOut()
+      window.location.href = 'login.html'
+    }
+
+    // Load profile
+    const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single()
+
+    document.getElementById('hero-name').textContent = `Hey, ${profile.username}! 👋`
+    document.getElementById('nav-username').textContent = profile.username
+    document.getElementById('points-display').textContent = profile.points
+    document.getElementById('streak-display').textContent = profile.streak
+
+    // Level system
+    const levels = [
+      { name: '🌱 Eco Seedling', min: 0, max: 100 },
+      { name: '🌿 Green Sprout', min: 100, max: 250 },
+      { name: '🍃 Eco Explorer', min: 250, max: 500 },
+      { name: '🌳 Green Guardian', min: 500, max: 1000 },
+      { name: '🌍 Eco Warrior', min: 1000, max: Infinity },
+    ]
+
+    const currentLevel = levels.findLast(l => profile.points >= l.min) || levels[0]
+    const nextLevel = levels[levels.indexOf(currentLevel) + 1]
+    document.getElementById('level-badge').textContent = currentLevel.name
+
+    if (nextLevel) {
+      const progress = ((profile.points - currentLevel.min) / (nextLevel.min - currentLevel.min)) * 100
+      document.getElementById('progress-fill').style.width = Math.min(progress, 100) + '%'
+      document.getElementById('progress-label-right').textContent = `${profile.points} / ${nextLevel.min} pts`
+      document.getElementById('next-level-label').textContent = `${nextLevel.min - profile.points} pts to ${nextLevel.name}`
+    } else {
+      document.getElementById('progress-fill').style.width = '100%'
+      document.getElementById('progress-label-right').textContent = 'Max level!'
+      document.getElementById('next-level-label').textContent = 'You\'ve reached the top! 🌍'
+    }
+
+    // Quest status today
+    const today = new Date().toISOString().split('T')[0]
+    const { data: completedToday } = await supabase
+      .from('completed_quests')
+      .select('quest_id')
+      .eq('user_id', user.id)
+      .gte('completed_at', today + 'T00:00:00')
+
+    const doneCount = (completedToday || []).length
+    const questStatusEl = document.getElementById('quest-status')
+    if (doneCount === 0) questStatusEl.textContent = 'No quests completed yet today'
+    else if (doneCount < 3) questStatusEl.textContent = `${doneCount}/3 quests done — keep going!`
+    else questStatusEl.textContent = '✅ All 3 quests done today!'
+
+    // Recent activity
+    const { data: recent } = await supabase
+      .from('completed_quests')
+      .select('completed_at, quest_id, quests(description, points_value, category)')
+      .eq('user_id', user.id)
+      .order('completed_at', { ascending: false })
+      .limit(5)
+
+    const activityList = document.getElementById('activity-list')
+    if (!recent || recent.length === 0) {
+      activityList.innerHTML = '<div class="empty-activity">No activity yet — complete your first quest! 🌿</div>'
+    } else {
+      activityList.innerHTML = ''
+      const categoryEmoji = { Reduce: '🔵', Reuse: '🟡', Recycle: '♻️', Rejuvenate: '🌿', Upcycle: '🔄' }
+      recent.forEach(item => {
+        const date = new Date(item.completed_at)
+        const label = date.toLocaleDateString('en-SG', { day: 'numeric', month: 'short' })
+        const emoji = categoryEmoji[item.quests?.category] || '✅'
+        activityList.innerHTML += `
+          <div class="activity-item">
+            <div class="activity-dot">${emoji}</div>
+            <div class="activity-text">
+              <p>${item.quests?.description || 'Quest completed'}</p>
+              <span>${label}</span>
+            </div>
+            <div class="activity-pts">+${item.quests?.points_value || 10} pts</div>
+          </div>
+        `
+      })
+    }
+  </script>
+</body>
+</html>
