@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Page Title</title>
+  <script defer src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
 </head>
 <body>
   <h1 title="cheese" style="text-align:center;">cheese</h1>
@@ -32,6 +33,15 @@
   <h2 title="cheese" style="text-align:center;"><a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ"> DO NOT CLICK ME</a></h2>
   <hr>
   <img title="cheese" src="https://upload.wikimedia.org/wikipedia/en/d/d0/Loss_comic.jpg" alt="you just lost THE GAME!" width="200" height="250">
+  <div id="output"></div>
+  <script>
+    async function runGame() {
+      let pyodide = await loadPyodide();
+      const gameCode = await fetch('rps.py').then(r => r.text());
+      pyodide.runPython(gameCode);
+    }
+    runGame();
+  </script>
 </body>
 </html>
 
