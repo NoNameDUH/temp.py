@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <title>Cheese</title>
   <script defer src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+  <style>
+    body { font-family: monospace; background-color: #1e1e1e; color: #00ff00; padding: 20px; }
+    #output { background-color: #000; padding: 15px; border-radius: 5px; min-height: 400px; overflow-y: auto; }
+    #inputArea { margin-top: 10px; }
+    #gameInput { padding: 5px; font-family: monospace; }
+    button { padding: 5px 10px; cursor: pointer; }
+  </style>
 </head>
 <body>
   <h1 title="cheese" style="text-align:center;">cheese</h1>
@@ -34,12 +41,47 @@
   <hr>
   <img title="cheese" src="https://upload.wikimedia.org/wikipedia/en/d/d0/Loss_comic.jpg" alt="you just lost THE GAME!" width="200" height="250">
   <div id="output"></div>
+  <div id="output"></div>
+  <div id="inputArea">
+    <input type="text" id="gameInput" placeholder="Enter your input...">
+    <button onclick="sendInput()">Submit</button>
+  </div>
   <script>
+    let inputQueue = [];
+    
     async function runGame() {
       let pyodide = await loadPyodide();
+      
+      pyodide.runPython(`
+        import sys
+        from js import inputQueue
+        
+        class GameInput:
+          def __call__(self, prompt=""):
+            output_div = js.window.document.getElementById('output')
+            output_div.innerHTML += f'<span style="color: #ffff00;">{prompt}</span>'
+            while len(inputQueue) == 0:
+              pass
+            user_input = inputQueue.pop(0)
+            output_div.innerHTML += f'<span style="color: #00ff00;">{user_input}</span><br>'
+            return user_input
+        
+        import builtins
+        builtins.input = GameInput()
+        
+        sys.stdout.write = lambda text: js.window.document.getElementById('output').innerHTML.__iadd__(text.replace('\n', '<br>'))
+      `);
+      
       const gameCode = await fetch('rps.py').then(r => r.text());
       pyodide.runPython(gameCode);
     }
+    
+    function sendInput() {
+      const input = document.getElementById('gameInput');
+      inputQueue.push(input.value);
+      input.value = '';
+    }
+    
     runGame();
   </script>
 </body>
